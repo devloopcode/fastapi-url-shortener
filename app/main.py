@@ -15,7 +15,7 @@ from app.api.v1.router import api_router
 from app.cache.analytics_cache import AnalyticsCache
 from app.cache.client import close_redis, get_redis
 from app.cache.url_cache import URLCache
-from app.config import settings
+from app.core.config import settings
 from app.core.exceptions import AppException
 from app.core.logging import configure_logging, get_logger
 from app.db.session import AsyncSessionFactory, engine

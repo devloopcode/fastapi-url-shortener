@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import asyncio
 import uuid
+from collections import Counter
 from datetime import datetime, timezone
 from typing import Any
 
 from app.cache.analytics_cache import AnalyticsCache
-from app.config import settings
+from app.core.config import settings
 from app.core.logging import get_logger
 from app.db.session import AsyncSessionFactory
 from app.repositories.click_event import ClickEventRepository
@@ -97,10 +98,11 @@ class AnalyticsProcessor:
             if db_events:
                 await click_repo.bulk_insert(db_events)
 
-            # Bulk increment click counts
-            for url_id in url_ids:
-                count = sum(1 for e in db_events if e["short_url_id"] == url_id)
-                for _ in range(count):
-                    await url_repo.increment_click_count(url_id)
+            # One UPDATE per URL, not one per click — avoids N+1 under load.
+            click_counts: Counter[uuid.UUID] = Counter(
+                e["short_url_id"] for e in db_events
+            )
+            for url_id, count in click_counts.items():
+                await url_repo.increment_click_count(url_id, by=count)
 
             await session.commit()

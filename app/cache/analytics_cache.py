@@ -5,7 +5,7 @@ from typing import Any, Optional
 
 from redis.asyncio import Redis
 
-from app.config import settings
+from app.core.config import settings
 
 _QUEUE_KEY = "analytics:queue"
 _SUMMARY_PREFIX = "analytics:summary:"
@@ -29,11 +29,13 @@ class AnalyticsCache:
         await self._redis.rpush(_QUEUE_KEY, json.dumps(event))
 
     async def pop_events(self, count: int = 100) -> list[dict[str, Any]]:
-        pipe = self._redis.pipeline()
-        pipe.lrange(_QUEUE_KEY, 0, count - 1)
-        pipe.ltrim(_QUEUE_KEY, count, -1)
-        results = await pipe.execute()
-        raw_events = results[0]
+        # LMPOP is atomic (Redis 7+): pops up to `count` elements in a single round-trip.
+        # The old lrange+ltrim pipeline was not atomic — a crash between the two commands
+        # would silently lose events already fetched but not yet trimmed.
+        result = await self._redis.lmpop(1, _QUEUE_KEY, direction="LEFT", count=count)
+        if not result:
+            return []
+        _key, raw_events = result
         return [json.loads(e) for e in raw_events]
 
     async def queue_length(self) -> int:

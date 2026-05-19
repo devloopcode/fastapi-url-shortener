@@ -6,7 +6,7 @@ from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config import settings
+from app.core.config import settings
 from app.core.exceptions import AuthenticationError, ConflictError
 from app.core.security import (
     create_access_token,

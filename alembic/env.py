@@ -12,7 +12,7 @@ from alembic import context
 # Ensure all models are imported so Alembic can detect them
 import app.models  # noqa: F401
 from app.db.base import Base
-from app.config import settings
+from app.core.config import settings
 
 config = context.config
 

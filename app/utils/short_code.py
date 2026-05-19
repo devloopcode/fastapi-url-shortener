@@ -3,7 +3,7 @@ from __future__ import annotations
 import secrets
 import string
 
-from app.config import settings
+from app.core.config import settings
 
 _ALPHABET = string.ascii_letters + string.digits  # base62
 

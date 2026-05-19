@@ -7,7 +7,7 @@ import redis.asyncio as aioredis
 # pyrefly: ignore [missing-import]
 from redis.asyncio import Redis
 
-from app.config import settings
+from app.core.config import settings
 
 _redis_client: Optional[Redis] = None
 

@@ -7,7 +7,7 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.cache.url_cache import URLCache
-from app.config import settings
+from app.core.config import settings
 from app.core.exceptions import (
     AuthorizationError,
     ConflictError,

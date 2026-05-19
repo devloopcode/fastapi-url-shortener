@@ -7,7 +7,7 @@ import qrcode
 from qrcode.image.pil import PilImage
 from redis.asyncio import Redis
 
-from app.config import settings
+from app.core.config import settings
 from app.core.exceptions import NotFoundError
 from app.core.logging import get_logger
 from app.repositories.url import URLRepository
