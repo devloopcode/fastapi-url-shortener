@@ -4,6 +4,7 @@ from fastapi import APIRouter, Request, status
 # pyrefly: ignore [missing-import]
 from fastapi.responses import Response
 
+from app.core.exceptions import RateLimitError
 from app.dependencies.auth import CurrentUser
 from app.dependencies.cache import RateLimiterDep
 from app.dependencies.db import DBSession
@@ -38,7 +39,6 @@ async def register(
         ip or "anon", limit=10, window=3600, endpoint="register"
     )
     if not allowed:
-        from app.core.exceptions import RateLimitError
         raise RateLimitError("Too many registration attempts")
 
     svc = AuthService(session)
@@ -58,7 +58,6 @@ async def login(
         ip or "anon", limit=20, window=300, endpoint="login"
     )
     if not allowed:
-        from app.core.exceptions import RateLimitError
         raise RateLimitError("Too many login attempts")
 
     svc = AuthService(session)

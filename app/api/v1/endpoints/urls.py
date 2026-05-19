@@ -5,6 +5,7 @@ import uuid
 from fastapi import APIRouter, Query, Request, status
 from fastapi.responses import Response
 
+from app.core.exceptions import RateLimitError
 from app.dependencies.auth import CurrentUser, OptionalUser
 from app.dependencies.cache import RateLimiterDep, URLCacheDep
 from app.dependencies.db import DBSession
@@ -34,7 +35,6 @@ async def create_url(
     limit = 100 if user else 10
     allowed, _, _ = await rate_limiter.is_allowed(identifier, limit=limit, window=3600, endpoint="create_url")
     if not allowed:
-        from app.core.exceptions import RateLimitError
         raise RateLimitError("URL creation rate limit exceeded")
 
     svc = URLService(session, url_cache)
