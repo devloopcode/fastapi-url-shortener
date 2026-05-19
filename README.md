@@ -1,4 +1,4 @@
-# URL Shortener — Production-Grade Backend
+# URL Shortener Backend
 
 A high-performance URL shortening platform built with **FastAPI**, designed to scale from day one. Architecture mirrors real-world systems like Bitly and TinyURL with an emphasis on low-latency redirects, async analytics, and Redis-first caching.
 
