@@ -66,9 +66,9 @@ class URLRepository(BaseRepository[ShortURL]):
         )
         return result.scalars().all(), total
 
-    async def increment_click_count(self, url_id: uuid.UUID) -> None:
+    async def increment_click_count(self, url_id: uuid.UUID, by: int = 1) -> None:
         await self.session.execute(
             update(ShortURL)
             .where(ShortURL.id == url_id)
-            .values(click_count=ShortURL.click_count + 1)
+            .values(click_count=ShortURL.click_count + by)
         )

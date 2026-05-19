@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from typing import Any, Sequence
 
 from sqlalchemy import func, select
@@ -70,9 +70,7 @@ class ClickEventRepository(BaseRepository[ClickEvent]):
         short_url_id: uuid.UUID,
         days: int = 30,
     ) -> list[tuple[date, int, int]]:
-        since = datetime.now(timezone.utc).replace(
-            hour=0, minute=0, second=0, microsecond=0
-        )
+        since = datetime.now(timezone.utc) - timedelta(days=days)
         stmt = (
             select(
                 func.date(ClickEvent.created_at).label("day"),
